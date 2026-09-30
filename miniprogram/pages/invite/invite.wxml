@@ -1,0 +1,12 @@
+<view class="invite-shell">
+ <view class="cloud-art">☁</view><view class="hero-title">留一点空白。</view>
+ <view class="hero-sub">一个可以放心浪费时间的地方。</view>
+ <view class="invite-card"><view class="invite-title">凭邀请，进来坐坐</view>
+  <input class="code-input" value="{{code}}" bindinput="onCode" maxlength="40" placeholder="输入邀请码" disabled="{{busy || checking}}" />
+  <checkbox-group bindchange="onConsent"><label class="consent"><checkbox value="agree" checked="{{consent}}" color="#526A75" />我已阅读并同意试用说明</label></checkbox-group>
+  <view class="privacy-link" bindtap="onPrivacy">{{privacyOpen ? '收起说明' : '查看试用说明'}}</view>
+  <view class="privacy" wx:if="{{privacyOpen}}">邀请码会绑定当前微信账号，我们使用微信身份的哈希值识别试用资格，不获取手机号和头像。收藏留在本机。昵称、留言、回复会保存到云端，由管理员审核后向试用成员展示；举报仅管理员可见。可在“我的留言”删除内容。请勿发布联系方式、广告或骚扰内容。管理员可暂停违规账号。</view>
+  <button class="btn btn-primary" bindtap="redeem" disabled="{{busy || checking}}">{{checking ? '正在确认…' : busy ? '正在进入…' : '进来坐坐'}}</button>
+  <view class="message" wx:if="{{message}}">{{message}}</view><view class="privacy-link" bindtap="check" wx:if="{{message}}">重新连接</view>
+ </view><view class="footnote">第一次需要邀请码，之后直接回来就好。</view>
+</view>

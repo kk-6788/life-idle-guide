@@ -1,0 +1,39 @@
+{
+  "pages": [
+    "pages/invite/invite",
+    "pages/home/home",
+    "pages/community/community",
+    "pages/saved/saved",
+    "pages/detail/detail",
+    "pages/manage/manage"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#F0F6F8",
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "人生浪费指南",
+    "backgroundColor": "#F0F6F8",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "color": "#526A75",
+    "selectedColor": "#253D4A",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/community/community",
+        "text": "大家闲聊"
+      },
+      {
+        "pagePath": "pages/saved/saved",
+        "text": "我收着的"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

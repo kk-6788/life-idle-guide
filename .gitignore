@@ -1,0 +1,20 @@
+# Private data and local verification
+work/
+reports/
+private/
+私密资料/
+.env
+.env.*
+*.sqlite3
+*.sqlite3-*
+*.db
+state-首次初始化.json
+邀请码*.txt
+
+# Generated dependencies and machine settings
+node_modules/
+__pycache__/
+*.py[cod]
+project.private.config.json
+.DS_Store
+Thumbs.db

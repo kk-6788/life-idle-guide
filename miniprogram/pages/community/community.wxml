@@ -1,0 +1,25 @@
+<block wx:if="{{authorized}}"><view class="shell">
+ <view class="view-head"><view class="view-title">大家闲聊</view><view class="view-sub">说点什么，或者只看看。</view></view>
+ <view class="toolbar"><button class="btn btn-primary" bindtap="toggleComposer">{{composer?'先收起来':'随便说两句'}}</button><view class="link-btn" bindtap="mine">我的留言</view><view class="link-btn" wx:if="{{isAdmin}}" bindtap="manage">管理</view></view>
+ <view class="post-form" wx:if="{{composer}}">
+  <picker range="{{activities}}" range-key="title" value="{{activityIndex}}" bindchange="activityChange"><view class="picker-value">{{activities[activityIndex].title}}</view></picker>
+  <input class="input" value="{{nickname}}" maxlength="20" bindinput="nicknameInput" placeholder="起个昵称（1–20字）"/>
+  <textarea class="textarea" value="{{text}}" maxlength="500" bindinput="textInput" placeholder="刚才发了会儿呆，也算。"/>
+  <view class="privacy-note">审核后向试用成员展示。请勿填写联系方式。</view>
+  <button class="btn btn-primary" bindtap="submit" disabled="{{sending}}">{{sending?'提交中…':'交给管理员'}}</button><view class="field-error">{{message}}</view>
+ </view>
+ <view class="state-panel" wx:if="{{error}}">{{error}}<button class="btn btn-ghost" bindtap="retry">重试</button></view>
+ <view class="post-list"><view class="post" wx:for="{{posts}}" wx:key="id">
+  <view class="post-meta"><text class="post-activity">{{item.activityTitle}}</text><text class="post-nick">{{item.nickname}}</text></view>
+  <text class="post-text">{{item.text}}</text><view class="post-time">{{item.time}}</view>
+  <view class="toolbar"><view class="link-btn" data-index="{{index}}" bindtap="toggleComments">{{item.expanded?'收起回复':'看看回复 · 说一句'}}</view><view class="link-btn" data-id="{{item.id}}" bindtap="report">举报</view></view>
+  <view class="post-comments" wx:if="{{item.expanded}}">
+   <view class="comment" wx:for="{{item.comments}}" wx:for-item="c" wx:key="id"><text class="comment-nick">{{c.nickname}}</text><text class="comment-text">{{c.text}}</text><view class="link-btn" data-id="{{c.id}}" bindtap="report">举报</view></view>
+   <view wx:if="{{!item.comments.length && !item.commentBusy}}" class="privacy-note">还没有已审核的回复。</view>
+   <button class="btn btn-ghost" wx:if="{{item.commentMore}}" data-index="{{index}}" bindtap="moreComments" disabled="{{item.commentBusy}}">再看一些回复</button>
+   <view class="comment-form"><input class="input" value="{{item.replyNick}}" maxlength="20" data-index="{{index}}" bindinput="replyNickInput" placeholder="昵称"/><textarea class="textarea" value="{{item.reply}}" maxlength="300" data-index="{{index}}" bindinput="replyInput" placeholder="想说的一句话"/><button class="btn btn-ghost" data-index="{{index}}" bindtap="reply" disabled="{{item.replyBusy}}">提交回复</button><view class="field-error">{{item.replyMsg}}</view></view>
+  </view>
+ </view></view>
+ <view class="state-panel" wx:if="{{!posts.length && !loading && !error}}">这里还很安静。坐一会儿也好。</view>
+ <view class="privacy-note" wx:if="{{loading}}">正在看看…</view><button class="btn btn-ghost" wx:if="{{more}}" bindtap="morePosts" disabled="{{loading}}">再看一些</button>
+</view></block><view wx:else class="shell state-panel">{{accessMessage}}<button class="btn btn-ghost" bindtap="retryAccess">重试</button></view>

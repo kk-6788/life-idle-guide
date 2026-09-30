@@ -1,0 +1,28 @@
+<block wx:if="{{authorized}}">
+<view class="shell">
+  <view class="view-head">
+    <view class="view-title">我收着的</view>
+  </view>
+
+  <view class="card-list">
+    <view class="card card--{{item.catClass}}" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="onCardTap">
+      <view class="card-head">
+        <view class="tag"><view class="cat-dot cat-dot--{{item.catClass}}"></view>{{item.category}}</view>
+        <view class="fav {{savedMap[item.id] ? 'on' : ''}}" data-id="{{item.id}}" catchtap="onFavTap">{{savedMap[item.id] ? '★' : '☆'}}</view>
+      </view>
+      <view class="card-title-row">
+        <view class="card-title">{{item.title}}</view>
+        <view class="paid-badge" wx:if="{{item.paid}}">有花费</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="state-panel" wx:if="{{list.length===0}}">
+    <view class="state-title">这里还空着</view>
+    <view>遇到喜欢的，点星星收下。</view>
+    <button class="btn btn-ghost go-btn" bindtap="onGoBrowse">去逛逛</button>
+  </view>
+</view>
+
+</block>
+<view wx:else class="shell state-panel">{{accessMessage}}<button class="btn btn-ghost" bindtap="retryAccess">重试</button></view>

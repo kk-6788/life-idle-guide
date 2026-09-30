@@ -1,0 +1,247 @@
+/* home.wxss */
+
+.shell {
+  padding: 24rpx 36rpx 48rpx;
+}
+
+/* 首页顶部：安静的小邀请 */
+.hero {
+  padding: 32rpx 8rpx 40rpx;
+}
+.hero-title {
+  font-size: 52rpx;
+  margin: 0 0 20rpx;
+}
+.hero-sub {
+  font-size: 30rpx;
+  margin: 0 0 44rpx;
+}
+
+.wheel {
+  position: relative;
+  width: 420rpx;
+  height: 448rpx;
+  margin: 0 auto;
+}
+.wheel-rotor {
+  position: absolute;
+  left: 0;
+  top: 16rpx;
+  width: 420rpx;
+  height: 420rpx;
+  border-radius: 50%;
+  box-shadow: 0 12rpx 28rpx rgba(37, 61, 74, 0.06);
+}
+.wheel-rotor.is-spinning {
+  transition: transform 2.1s cubic-bezier(0.16, 0.7, 0.15, 1);
+}
+.wheel-image { width: 100%; height: 100%; display: block; }
+.wheel-label {
+  position: absolute;
+  width: 104rpx;
+  font-size: 22rpx;
+  line-height: 1.35;
+  font-weight: 400;
+  color: #253D4A;
+  text-align: center;
+  word-break: break-all;
+  pointer-events: none;
+}
+.wheel-pointer {
+  position: absolute;
+  top: 0;
+  left: 196rpx;
+  width: 0;
+  height: 0;
+  border-left: 14rpx solid transparent;
+  border-right: 14rpx solid transparent;
+  border-top: 32rpx solid #526A75;
+  z-index: 2;
+}
+.wheel .wheel-button {
+  position: absolute;
+  top: 169rpx;
+  left: 153rpx;
+  width: 114rpx;
+  height: 114rpx;
+  padding: 0;
+  margin: 0;
+  border: 7rpx solid #FFFFFF;
+  border-radius: 50%;
+  box-sizing: border-box;
+  background: #253D4A;
+  color: #FFFFFF;
+  font-size: 26rpx;
+  line-height: 100rpx;
+  z-index: 3;
+}
+.wheel-button::after { border: 0; }
+.wheel-button[disabled] { background: #526A75; color: #FFFFFF; }
+@media (prefers-reduced-motion: reduce) {
+  .wheel-rotor.is-spinning { transition: none; }
+}
+
+/* 列表标题 + 找一找，同一行 */
+.list-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 20rpx;
+}
+.list-title {
+  font-family: "Songti SC", "STSong", SimSun, serif;
+  font-size: 36rpx;
+  font-weight: 500;
+  letter-spacing: 2rpx;
+  color: #253D4A;
+}
+.find-toggle {
+  color: #526A75;
+  font-size: 28rpx;
+  padding: 16rpx 0 16rpx 16rpx;
+}
+
+/* 收起的筛选区 */
+.filters {
+  margin-bottom: 24rpx;
+}
+.search {
+  width: 100%;
+  box-sizing: border-box;
+  height: 76rpx;
+  padding: 0 24rpx;
+  border: 1rpx solid rgba(37, 61, 74, 0.18);
+  border-radius: 999rpx;
+  background: #FFFFFF;
+  color: #253D4A;
+  font-size: 28rpx;
+  margin-bottom: 20rpx;
+}
+
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-bottom: 16rpx;
+}
+.chip-group:last-of-type {
+  margin-bottom: 0;
+}
+
+.chip {
+  font-size: 26rpx;
+  color: #526A75;
+  background: #FFFFFF;
+  border: 1rpx solid rgba(37, 61, 74, 0.18);
+  border-radius: 999rpx;
+  padding: 10rpx 22rpx;
+  line-height: 1.4;
+}
+.chip.chip-tone--0 { background: #F0F6F8; }
+.chip.chip-tone--1 { background: #EEF5EF; }
+.chip.chip-tone--2 { background: #FFF0E6; }
+.chip.chip-tone--3 { background: #F1EDF8; }
+.chip.chip-tone--4 { background: #FAF4DF; }
+
+.chip.is-active {
+  background: rgba(184, 205, 192, 0.55);
+  border-color: #B8CDC0;
+  color: #253D4A;
+}
+
+.filter-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16rpx;
+}
+.result-count {
+  color: #526A75;
+  font-size: 26rpx;
+}
+.reset-filters {
+  color: #526A75;
+  font-size: 26rpx;
+  text-decoration: underline;
+  padding: 8rpx 0;
+}
+
+/* 列表卡片：只留分类、标题、收藏、付费标记 */
+.card-list {
+  display: block;
+}
+
+.card {
+  border: 1rpx solid rgba(37, 61, 74, 0.08);
+  border-radius: 20rpx;
+  padding: 28rpx;
+  margin-bottom: 24rpx;
+  min-height: 140rpx;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+}
+
+.tag {
+  display: flex;
+  align-items: center;
+  color: #526A75;
+  font-size: 24rpx;
+}
+
+.fav {
+  color: #667E88;
+  font-size: 36rpx;
+  line-height: 1;
+  width: 88rpx;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin: -20rpx -12rpx -20rpx 0;
+  box-sizing: border-box;
+}
+.fav.on {
+  color: #EBD0B4;
+}
+
+.card-title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.card-title {
+  font-size: 30rpx;
+  color: #253D4A;
+  line-height: 1.5;
+}
+
+.paid-badge {
+  flex: none;
+  color: #526A75;
+  font-size: 24rpx;
+  background: rgba(37, 61, 74, 0.06);
+  border-radius: 999rpx;
+  padding: 4rpx 16rpx;
+}
+
+.more-btn {
+  margin: 16rpx 0 8rpx;
+}
+
+.state-title {
+  font-family: "Songti SC", "STSong", SimSun, serif;
+  font-size: 32rpx;
+  color: #253D4A;
+  margin-bottom: 10rpx;
+}
