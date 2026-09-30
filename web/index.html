@@ -53,11 +53,31 @@
 
     <!-- 随便逛 -->
     <section id="view-browse" class="view" aria-label="随便逛" hidden>
+      <section id="wheel-section" class="wheel-section" aria-labelledby="wheel-title">
+        <div class="wheel-stage">
+          <span class="wheel-pointer" aria-hidden="true"></span>
+          <div class="wheel-disc-frame">
+            <svg id="wheel-disc" class="wheel-disc" viewBox="0 0 320 320" aria-hidden="true"></svg>
+          </div>
+          <button id="wheel-spin" class="wheel-spin" type="button" aria-label="转一下，随机挑一件小事" aria-describedby="wheel-hint" disabled>转一下</button>
+        </div>
+        <div class="wheel-copy">
+          <h2 id="wheel-title">随便转转</h2>
+          <p class="wheel-intro">转到什么，都可以不做。</p>
+          <p id="wheel-hint" class="wheel-hint" role="status">小事正在路上…</p>
+          <div id="wheel-result" class="wheel-result" aria-live="polite" aria-atomic="true" hidden>
+            <h3 id="wheel-result-title"></h3>
+            <p id="wheel-maxim" class="wheel-maxim"></p>
+            <p id="wheel-cost" class="wheel-cost"></p>
+            <a id="wheel-detail" class="btn btn-ghost" href="#/browse">看看这件小事</a>
+          </div>
+        </div>
+      </section>
       <div class="controls" aria-label="筛选与随机">
         <div class="search-row">
           <label class="search-label" for="search-input">找找</label>
           <input id="search-input" type="search" placeholder="搜标题、正文或需要的东西，比如「废纸」" autocomplete="off">
-          <button id="random-btn" class="btn btn-ghost" type="button">随便挑一个</button>
+          <button id="random-btn" class="btn btn-ghost" type="button" disabled>转盘挑一个</button>
         </div>
 
         <fieldset class="chip-group">
@@ -218,6 +238,7 @@
   </div>
 
   <script src="../shared/guide.js"></script>
+  <script src="wheel.js"></script>
   <script src="community.js"></script>
   <script src="app.js"></script>
 </body>

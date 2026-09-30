@@ -245,6 +245,79 @@ body {
 
 /* ---------- 视图与筛选 ---------- */
 
+.wheel-section {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  align-items: center;
+  gap: 52px;
+  max-width: 760px;
+  margin: 0 auto 38px;
+  padding-top: 12px;
+  scroll-margin-top: 90px;
+}
+
+.wheel-stage { position: relative; width: 320px; aspect-ratio: 1; }
+.wheel-disc-frame {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 50%;
+  box-shadow: 0 8px 25px rgba(37, 61, 74, 0.06);
+}
+.wheel-disc {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: 50%;
+  color: var(--ink);
+  font: 500 12px var(--sans);
+}
+
+.wheel-pointer {
+  position: absolute;
+  z-index: 2;
+  top: -4px;
+  left: calc(50% - 10px);
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 22px solid var(--ink);
+}
+
+.wheel-spin {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 82px;
+  height: 82px;
+  border: 5px solid var(--white);
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--white);
+  font: 500 15px var(--sans);
+  cursor: pointer;
+}
+
+.wheel-spin:hover:not(:disabled) { background: #2E4A5C; }
+.wheel-spin:disabled { cursor: default; }
+.wheel-spin:focus-visible { border-radius: 50%; }
+.wheel-copy h2 { font: 500 1.8rem var(--serif); letter-spacing: 0.1em; margin: 0 0 12px; }
+.wheel-intro { margin: 0 0 16px; color: var(--slate-text); }
+.wheel-hint { margin: 0; font-size: 0.85rem; color: var(--slate-text); }
+.wheel-result { margin-top: 14px; border-left: 2px solid var(--sage); padding-left: 18px; }
+.wheel-result h3 { margin: 0 0 8px; font-size: 1.1rem; font-weight: 500; }
+.wheel-maxim { margin: 0 0 10px; font-family: var(--serif); color: var(--slate-text); }
+.wheel-cost { margin: 0 0 14px; color: var(--slate-text); font-size: 0.82rem; }
+.wheel-result .btn { font-size: 0.85rem; }
+
+@media (max-width: 680px) {
+  .wheel-section { grid-template-columns: 1fr; gap: 24px; text-align: center; margin-bottom: 30px; }
+  .wheel-stage { width: min(300px, 100%); margin: 0 auto; }
+  .wheel-copy h2 { font-size: 1.4rem; margin-bottom: 8px; }
+  .wheel-intro { margin-bottom: 8px; }
+  .wheel-result { border-left: 0; padding-left: 0; max-width: 340px; margin: 12px auto 0; }
+}
+
 .view { padding-bottom: 48px; }
 
 .view-head h2 {

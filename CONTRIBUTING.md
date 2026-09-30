@@ -20,11 +20,12 @@ node --test tests/guide.test.js
 - 保持简单，避免引入不必要的依赖；后端目前只用 Python 标准库。
 - 用户留言、回复和昵称按纯文本展示，不能直接作为 HTML 插入。
 - 新功能和错误修复应有能验证实际行为的检查；内容与筛选测试在 `tests/guide.test.js`，本机服务测试在 `tests/test_community.py`。
+- 网页转盘在 `web/wheel.js`，对应 `tests/web-wheel.test.js`；抽取范围、指针与结果的对应、重复点击和中断都应保持一致。
 
 运行相关检查：
 
 ```bash
-node --test tests/guide.test.js
+node --test tests/guide.test.js tests/web-wheel.test.js
 python -m unittest discover -s tests -p test_community.py -v
 ```
 

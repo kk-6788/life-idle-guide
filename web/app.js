@@ -1,10 +1,11 @@
 'use strict';
 
-/* 人生浪费指南 — 静态网页逻辑（无依赖，配合 shared/guide.js 与 community.js） */
+/* 人生浪费指南 — 静态网页逻辑（无依赖，配合 shared/guide.js、wheel.js 与 community.js） */
 
 (function () {
   var Guide = window.Guide;
   var Community = window.CommunityModule;
+  var Wheel = window.Wheel;
 
   var CONTENT_URL = '../shared/content.json';
   var SAVED_KEY = 'lwz-favorites-v1';
@@ -28,6 +29,9 @@
 
   var els = {};
   var lastFocus = null;
+  var wheelSpinner;
+  var wheelPoolKey = null;
+  var wheelAnimation = null;
 
   function $(id) { return document.getElementById(id); }
 
@@ -74,6 +78,11 @@
   /* ---------- 加载内容 ---------- */
 
   function loadContent() {
+    wheelSpinner.cancel();
+    wheelPoolKey = null;
+    state.loaded = false;
+    els.wheelSpin.disabled = els.randomBtn.disabled = true;
+    els.wheelHint.textContent = '小事正在路上…';
     els.loadError.hidden = true;
     fetch(CONTENT_URL)
       .then(function (r) {
@@ -93,6 +102,7 @@
         els.loadError.hidden = false;
         els.browseList.innerHTML = '';
         els.resultCount.textContent = '';
+        els.wheelHint.textContent = '内容没加载出来，请在下方再试一次。';
       });
   }
 
@@ -127,6 +137,7 @@
   function renderBrowse() {
     if (!state.loaded) return;
     var list = filtered();
+    refreshWheel(list);
     els.resultCount.textContent = list.length > 0 ? '共 ' + list.length + ' 条' : '';
     els.browseList.innerHTML = list.map(cardHTML).join('');
     els.browseEmpty.hidden = list.length !== 0;
@@ -200,6 +211,10 @@
   }
 
   function setView(view, keepActive) {
+    if (view !== 'browse') {
+      wheelSpinner.cancel();
+      wheelPoolKey = null;
+    }
     state.view = view;
     ['browse', 'community', 'saved'].forEach(function (v) {
       els['view' + cap(v)].hidden = v !== view;
@@ -481,13 +496,98 @@
 
   /* ---------- 随机 ---------- */
 
+  function drawWheel(items) {
+    var colors = ['#DCEBE5', '#FCEADB', '#E7E0F2', '#E1EDF4', '#F6EDCE', '#DFEEE8', '#F4E2E3', '#E4E9F6'];
+    var parts = [];
+    var count = items.length;
+    var step = 360 / (count || 1);
+    function point(deg, radius) {
+      var angle = deg * Math.PI / 180;
+      return [160 + radius * Math.cos(angle), 160 + radius * Math.sin(angle)];
+    }
+    if (count <= 1) parts.push('<circle cx="160" cy="160" r="154" fill="' + colors[0] + '"/>');
+    items.forEach(function (item, index) {
+      var center = index * step - 90;
+      if (count > 1) {
+        var from = point(center - step / 2, 154);
+        var to = point(center + step / 2, 154);
+        parts.push('<path d="M160 160 L' + from.join(' ') + ' A154 154 0 ' + (step > 180 ? 1 : 0) + ' 1 ' + to.join(' ') + ' Z" fill="' + colors[index] + '" stroke="#FFFFFF" stroke-width="1.5"/>');
+      }
+      var at = point(center, 106);
+      var chars = Array.from(item.title.split('：')[0]);
+      if (chars.length > 9) chars = chars.slice(0, 8).concat('…');
+      var lines = chars.length > 5 ? [chars.slice(0, 5).join(''), chars.slice(5).join('')] : [chars.join('')];
+      parts.push('<text x="' + at[0] + '" y="' + at[1] + '" text-anchor="middle" dominant-baseline="central" transform="rotate(' + (index * step) + ' ' + at.join(' ') + ')">');
+      lines.forEach(function (line, i) {
+        parts.push('<tspan x="' + at[0] + '" y="' + (at[1] + (i - (lines.length - 1) / 2) * 16) + '">' + esc(line) + '</tspan>');
+      });
+      parts.push('</text>');
+    });
+    parts.push('<circle cx="160" cy="160" r="154" fill="none" stroke="#FFFFFF" stroke-width="4"/>');
+    els.wheelDisc.innerHTML = parts.join('');
+    els.wheelDisc.style.transform = 'rotate(0deg)';
+  }
+
+  function refreshWheel(list) {
+    var key = list.map(function (item) { return item.id; }).join('\0');
+    if (key === wheelPoolKey) return;
+    wheelPoolKey = key;
+    wheelSpinner.cancel();
+    var preview = Wheel.createRound(list, state.lastRandomId);
+    drawWheel(preview ? preview.items : []);
+    els.wheelResult.hidden = true;
+    els.wheelHint.textContent = list.length ? '从当前 ' + list.length + ' 件小事里挑。' : '没有匹配的小事，换个筛选看看。';
+    els.wheelSpin.disabled = els.randomBtn.disabled = !list.length;
+  }
+
+  function setupWheel() {
+    drawWheel([]);
+    wheelSpinner = Wheel.createSpinner({
+      onBusy: function (busy) {
+        els.wheelSpin.disabled = els.randomBtn.disabled = busy || !state.loaded || !filtered().length;
+        els.wheelSpin.textContent = busy ? '转着呢' : '转一下';
+        els.wheelResult.setAttribute('aria-busy', String(busy));
+        if (busy) { els.wheelResult.hidden = true; els.wheelHint.textContent = '转着呢…'; }
+      },
+      animate: function (round) {
+        drawWheel(round.items);
+        var angle = Wheel.targetAngle(round.index, round.items.length);
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !els.wheelDisc.animate) {
+          els.wheelDisc.style.transform = 'rotate(' + angle + 'deg)';
+          return Promise.resolve();
+        }
+        var animation = els.wheelDisc.animate([
+          { transform: 'rotate(0deg)' },
+          { transform: 'rotate(' + (1440 + angle) + 'deg)' }
+        ], { duration: 2800, easing: 'cubic-bezier(0.12, 0.75, 0.17, 1)', fill: 'forwards' });
+        wheelAnimation = animation;
+        return animation.finished.then(function () {
+          if (wheelAnimation !== animation) return;
+          els.wheelDisc.style.transform = 'rotate(' + angle + 'deg)';
+          wheelAnimation = null;
+          animation.cancel();
+        });
+      },
+      onCancel: function () {
+        if (wheelAnimation) { wheelAnimation.cancel(); wheelAnimation = null; }
+      },
+      onResult: function (round) {
+        state.lastRandomId = round.item.id;
+        els.wheelHint.textContent = '这次转到了';
+        els.wheelResultTitle.textContent = round.item.title;
+        els.wheelMaxim.textContent = round.item.maxim || '';
+        els.wheelCost.textContent = Guide.costLabel(round.item.cost) + (round.item.costNote ? '：' + round.item.costNote : '');
+        els.wheelDetail.href = '#/a/' + encodeURIComponent(round.item.id);
+        els.wheelResult.hidden = false;
+      },
+      onEmpty: function () { els.wheelHint.textContent = '没有匹配的小事，换个筛选看看。'; },
+      onError: function () { els.wheelHint.textContent = '没能转起来，再转一次试试。'; }
+    });
+  }
+
   function pickRandom() {
-    var list = filtered();
-    var picked = Guide.pickRandom(list, state.lastRandomId);
-    if (!picked) return;
-    state.lastRandomId = picked.id;
-    openDetail(picked.id);
-    history.replaceState(null, '', '#/a/' + encodeURIComponent(picked.id));
+    if (!state.loaded) return;
+    wheelSpinner.start(filtered(), state.lastRandomId);
   }
 
   /* ---------- 事件绑定 ---------- */
@@ -509,7 +609,11 @@
       });
     });
 
-    els.randomBtn.addEventListener('click', pickRandom);
+    els.wheelSpin.addEventListener('click', pickRandom);
+    els.randomBtn.addEventListener('click', function () {
+      els.wheelSection.scrollIntoView({ block: 'center', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+      pickRandom();
+    });
     els.retryBtn.addEventListener('click', loadContent);
     els.clearFilterBtn.addEventListener('click', function () {
       state.query = ''; state.category = ''; state.setting = ''; state.company = '';
@@ -655,6 +759,9 @@
       loadError: 'load-error', browseList: 'browse-list', browseEmpty: 'browse-empty',
       savedList: 'saved-list', savedEmpty: 'saved-empty', resultCount: 'result-count',
       searchInput: 'search-input', randomBtn: 'random-btn', retryBtn: 'retry-btn',
+      wheelSection: 'wheel-section', wheelDisc: 'wheel-disc', wheelSpin: 'wheel-spin',
+      wheelHint: 'wheel-hint', wheelResult: 'wheel-result', wheelResultTitle: 'wheel-result-title',
+      wheelMaxim: 'wheel-maxim', wheelCost: 'wheel-cost', wheelDetail: 'wheel-detail',
       clearFilterBtn: 'clear-filter-btn', detailDialog: 'detail-dialog', detailClose: 'detail-close',
       detailTitle: 'detail-title', detailMaxim: 'detail-maxim', detailSummary: 'detail-summary', detailCost: 'detail-cost', detailCategory: 'detail-category',
       detailSetting: 'detail-setting', detailCompany: 'detail-company', detailBody: 'detail-body',
@@ -673,6 +780,7 @@
   }
 
   cacheEls();
+  setupWheel();
   bind();
   loadContent();
   route();
