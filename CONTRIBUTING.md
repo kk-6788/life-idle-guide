@@ -1,48 +1,37 @@
-# 贡献指南（CONTRIBUTING）
+# 一起共建
 
-欢迎参与《人生浪费指南》。请先读 CONTENT_GUIDE.md 与 docs/上线前事项.md，遵守本项目的边界。
+欢迎给《人生浪费指南》添一件小事。可以先开 Issue，说说你的想法；会改代码的话，也可以直接提交 Pull Request。
 
-## 一、改内容：只改 shared/content.json
+## 添一件小事
 
-- `shared/content.json` 是唯一内容源（网页与小程序的共同数据来源）。
-- 保持数组顺序稳定、id 稳定唯一；新条目追加。
-- 投稿与费用收录标准见 CONTENT_GUIDE.md。
+先看 [内容规则](CONTENT_GUIDE.md)。`shared/content.json` 是网页的唯一内容源；新条目追加到数组末尾，保留已有条目的顺序和 id。
 
-改完运行：
+写清楚名字、做法、人数、地点，以及是否需要经济成本。加一句短短的格言，允许读者什么也没做、随时停下。不要把休息写成任务，也不要把花钱写成休息的前提。
 
-```bash
-node --test tests/guide.test.js          # 内容与筛选/随机逻辑回归
-node tools/sync_content.js               # 同步到小程序
-node tools/sync_content.js --check       # 校验网页/小程序同源
-```
-
-不要手改 `miniprogram/data/content.js` 或 `miniprogram/utils/guide.js`，它们由同步脚本生成。
-
-## 二、改代码
-
-- 网页：`web/`；后端：`server/`；小程序：`miniprogram/`；共享逻辑：`shared/guide.js`。
-- 不引入新依赖；后端只用 Python 标准库。
-- 外部用户内容一律按**纯文本**呈现，不要插成 HTML / rich-text。
-- 新增行为应有有意义的测试：
-  - 内容/筛选逻辑 → `tests/guide.test.js`
-  - 后端存储/HTTP → `tests/test_community.py`
-
-运行测试：
+修改后运行：
 
 ```bash
 node --test tests/guide.test.js
-python -m unittest tests/test_community.py -v
 ```
 
-## 三、流程
+## 改网页或本机服务
 
-1. 先对照 CONTENT_GUIDE.md 自查，再改 `shared/content.json`。
-2. 跑测试与 `sync_content.js --check`，全部通过才算可合并。
-3. 每批变更在 `reports/` 记录：新增/删改哪些、为什么、验证结果。如实记录，不夸大。
+- 网页代码在 `web/`，共用逻辑在 `shared/guide.js`，可选的本机闲聊服务在 `server/`。
+- 保持简单，避免引入不必要的依赖；后端目前只用 Python 标准库。
+- 用户留言、回复和昵称按纯文本展示，不能直接作为 HTML 插入。
+- 新功能和错误修复应有能验证实际行为的检查；内容与筛选测试在 `tests/guide.test.js`，本机服务测试在 `tests/test_community.py`。
 
-## 四、不做什么
+运行相关检查：
 
-- 不虚构用户、评论、访客数字或收入；预览内容不得冒充线上社区数据。
-- 不收录刷短视频、不提供盗版资源、不制造"必须买 X 才能玩"的条件。
-- 不伪造 AppID、不声称未真机验证的发布成功。
-- 不把本机匿名接口声明为可直接公网部署。
+```bash
+node --test tests/guide.test.js
+python -m unittest discover -s tests -p test_community.py -v
+```
+
+## 提交前看看
+
+说明这次改了什么、为什么改，以及做过哪些检查。保留与这次修改无关的内容，勿提交个人数据、密钥或本机数据库。
+
+不虚构用户、评论、访客数字或收入；不收录刷短视频、电子游戏、充值或盗版资源；不把本机匿名接口描述成可以直接用于公网的社区后台。
+
+代码与文字的许可尚未确定。上线相关说明见 [上线前事项](docs/上线前事项.md)。

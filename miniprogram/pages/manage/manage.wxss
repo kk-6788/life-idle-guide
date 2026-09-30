@@ -1,2 +1,0 @@
-@import "../community/community.wxss";
-.member-id{font-size:22rpx;word-break:break-all;color:#526a75}
